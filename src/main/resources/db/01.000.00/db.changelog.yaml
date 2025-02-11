@@ -1,0 +1,23 @@
+databaseChangeLog:
+  - include:
+      file: addresses.sql
+      relativeToChangelogFile: true
+  - include:
+      file: arrival_time.sql
+      relativeToChangelogFile: true
+  - include:
+      file: contacts.sql
+      relativeToChangelogFile: true
+  - include:
+      file: amenities.sql
+      relativeToChangelogFile: true
+  - include:
+      file: hotels.sql
+      relativeToChangelogFile: true
+  - changeSet:
+      id: 01.000.00
+      author: Denis_Chernous
+      logicalFilePath: 01.000.00/db.changelog.yaml
+      changes:
+        - tagDatabase:
+            tag: 01.000.00
