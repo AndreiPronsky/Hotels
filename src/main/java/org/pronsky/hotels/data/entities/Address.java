@@ -8,10 +8,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
+@EqualsAndHashCode
 @Entity
 @Builder
 @NoArgsConstructor
@@ -38,4 +42,10 @@ public class Address {
 
     @Column(name = "post_code", nullable = false)
     private String postCode;
+
+    @Override
+    public String toString() {
+        return String.format("%s %s, %s, %s, %s",
+                houseNumber, street, city, postCode, country);
+    }
 }
