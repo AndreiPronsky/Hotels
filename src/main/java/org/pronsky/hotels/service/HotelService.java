@@ -1,5 +1,7 @@
 package org.pronsky.hotels.service;
 
+import org.pronsky.hotels.service.dto.request.HotelForCreatingDto;
+import org.pronsky.hotels.service.dto.request.HotelSearchDto;
 import org.pronsky.hotels.service.dto.response.FullHotelDto;
 import org.pronsky.hotels.service.dto.response.ReducedHotelDto;
 
@@ -12,9 +14,11 @@ public interface HotelService {
 
     FullHotelDto findById(long id);
 
-    List<ReducedHotelDto> findAllFiltered(String name, String brand, String city, String country, Map<String, Boolean> amenities);
+    List<ReducedHotelDto> findAllFiltered(HotelSearchDto searchParams);
 
-    ReducedHotelDto create(FullHotelDto hotel);
+    ReducedHotelDto create(HotelForCreatingDto hotelDto);
 
-    void setHotelAmenities(long id, Map<String, Boolean> amenities);
+    void setHotelAmenities(long id, List<String> amenitiesList);
+
+    Map<String, Integer> getHistogram(String parameter);
 }
