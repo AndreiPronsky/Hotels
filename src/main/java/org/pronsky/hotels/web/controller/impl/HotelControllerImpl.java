@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import org.pronsky.hotels.service.HotelService;
 import org.pronsky.hotels.service.dto.request.HotelForCreatingDto;
 import org.pronsky.hotels.service.dto.request.HotelSearchDto;
-import org.pronsky.hotels.service.dto.response.ErrorResponseDto;
 import org.pronsky.hotels.service.dto.response.FullHotelDto;
 import org.pronsky.hotels.service.dto.response.ReducedHotelDto;
 import org.pronsky.hotels.web.controller.HotelController;
