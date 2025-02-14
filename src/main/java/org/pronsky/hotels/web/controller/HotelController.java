@@ -58,6 +58,7 @@ public interface HotelController {
                                                  @RequestParam(required = false) String country,
                                                  @RequestParam(required = false) List<String> amenities);
 
+
     @Operation(summary = "Add a new hotel")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "Created", content =

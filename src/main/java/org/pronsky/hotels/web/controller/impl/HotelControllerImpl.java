@@ -40,7 +40,6 @@ public class HotelControllerImpl implements HotelController {
         return ResponseEntity.ok(hotelService.findById(id));
     }
 
-
     @Override
     @GetMapping("/search")
     public ResponseEntity<List<ReducedHotelDto>> search(@RequestParam(required = false) String name,
