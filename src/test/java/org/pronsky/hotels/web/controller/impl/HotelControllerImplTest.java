@@ -244,7 +244,7 @@ class HotelControllerImplTest {
 
     @Test
     @SneakyThrows
-    void createHotel_ShouldReturn400ForInvalidInput() {
+    void createHotel_ShouldReturn422ForInvalidInput() {
         HotelForCreatingDto invalidHotel = HotelForCreatingDto.builder()
                 .name("")
                 .build();
@@ -252,6 +252,6 @@ class HotelControllerImplTest {
         mockMvc.perform(post("/property-view/hotels")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(invalidHotel)))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnprocessableEntity());
     }
 }
