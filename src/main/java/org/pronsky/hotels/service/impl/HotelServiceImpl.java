@@ -18,6 +18,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +29,16 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class HotelServiceImpl implements HotelService {
 
-    public static final String FREE_PARKING = "freeParking";
-    public static final String FREE_WI_FI = "freeWiFi";
-    public static final String NON_SMOKING_ROOMS = "nonSmokingRooms";
-    public static final String CONCIERGE = "concierge";
-    public static final String ON_SITE_RESTAURANT = "onSiteRestaurant";
-    public static final String FITNESS_CENTER = "fitnessCenter";
-    public static final String PET_FRIENDLY_ROOMS = "petFriendlyRooms";
-    public static final String ROOM_SERVICE = "roomService";
-    public static final String BUSINESS_CENTER = "businessCenter";
-    public static final String MEETING_ROOMS = "meetingRooms";
+    public static final String FREE_PARKING = "Free parking";
+    public static final String FREE_WI_FI = "Free WiFi";
+    public static final String NON_SMOKING_ROOMS = "Non-smoking rooms";
+    public static final String CONCIERGE = "Concierge";
+    public static final String ON_SITE_RESTAURANT = "On-site restaurant";
+    public static final String FITNESS_CENTER = "Fitness center";
+    public static final String PET_FRIENDLY_ROOMS = "Pet-friendly rooms";
+    public static final String ROOM_SERVICE = "Room service";
+    public static final String BUSINESS_CENTER = "Business center";
+    public static final String MEETING_ROOMS = "Meeting rooms";
 
     private final HotelRepository hotelRepository;
     private final HotelMapper hotelMapper;
@@ -54,7 +55,9 @@ public class HotelServiceImpl implements HotelService {
         Hotel hotel = hotelRepository.findById(id)
                 .orElseThrow(() -> new HotelNotFoundException(String.valueOf(id)));
         FullHotelDto hotelDto = hotelMapper.fromEntityToFullHotelDto(hotel);
-        hotelDto.setAmenities(hotelMapper.amenitiesToAmenitiesDto(hotel.getAmenities()));
+        if (hotel.getAmenities() != null) {
+            hotelDto.setAmenities(hotelMapper.mapAmenities(hotel.getAmenities()));
+        }
         return hotelDto;
     }
 
@@ -64,18 +67,24 @@ public class HotelServiceImpl implements HotelService {
                 .where(HotelSearchSpecification.hasCity(searchParams.getCity()))
                 .and(HotelSearchSpecification.hasName(searchParams.getName()))
                 .and(HotelSearchSpecification.hasBrand(searchParams.getBrand()))
-                .and(HotelSearchSpecification.hasCounty(searchParams.getCountry()))
+                .and(HotelSearchSpecification.hasCountry(searchParams.getCountry()))
                 .and(HotelSearchSpecification.hasAmenities(searchParams.getAmenities()));
 
-        return hotelRepository.findAll(specification).stream()
-                .map(hotelMapper::fromEntityToReducedHotelDto)
-                .toList();
+        List<Hotel> hotels = hotelRepository.findAll(specification);
+        List<ReducedHotelDto> hotelDtos = new ArrayList<>();
+        if (!hotels.isEmpty()) {
+            hotelDtos = hotels.stream()
+                    .map(hotelMapper::fromEntityToReducedHotelDto)
+                    .toList();
+        }
+        return hotelDtos;
     }
 
     @Override
     public ReducedHotelDto create(HotelForCreatingDto hotelDto) {
+        Hotel toCreate = hotelMapper.fromHotelForCreatingDtoToHotel(hotelDto);
         return hotelMapper.fromEntityToReducedHotelDto(
-                hotelRepository.save(hotelMapper.fromHotelForCreatingDtoToHotel(hotelDto)));
+                hotelRepository.save(toCreate));
     }
 
     @Override

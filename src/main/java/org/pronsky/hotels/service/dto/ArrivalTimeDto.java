@@ -4,13 +4,13 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Builder
 @AllArgsConstructor
 public class ArrivalTimeDto {
 
-    private LocalDateTime checkIn;
-    private LocalDateTime checkOut;
+    private LocalTime checkIn;
+    private LocalTime checkOut;
 }
