@@ -6,12 +6,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.pronsky.hotels.service.dto.request.HotelForCreatingDto;
-import org.pronsky.hotels.service.dto.request.HotelSearchDto;
 import org.pronsky.hotels.service.dto.response.ErrorResponseDto;
 import org.pronsky.hotels.service.dto.response.FullHotelDto;
 import org.pronsky.hotels.service.dto.response.ReducedHotelDto;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.List;
 import java.util.Map;
@@ -52,7 +52,11 @@ public interface HotelController {
                     {@Content(mediaType = "application/json", schema =
                     @Schema(implementation = ErrorResponseDto.class))})
     })
-    ResponseEntity<List<ReducedHotelDto>> search(HotelSearchDto searchParams);
+    ResponseEntity<List<ReducedHotelDto>> search(@RequestParam(required = false) String name,
+                                                 @RequestParam(required = false) String brand,
+                                                 @RequestParam(required = false) String city,
+                                                 @RequestParam(required = false) String country,
+                                                 @RequestParam(required = false) List<String> amenities);
 
     @Operation(summary = "Add a new hotel")
     @ApiResponses(value = {

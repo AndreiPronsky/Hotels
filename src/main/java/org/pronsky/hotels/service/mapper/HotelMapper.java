@@ -9,7 +9,6 @@ import org.pronsky.hotels.data.entities.ArrivalTime;
 import org.pronsky.hotels.data.entities.Contacts;
 import org.pronsky.hotels.data.entities.Hotel;
 import org.pronsky.hotels.service.dto.AddressDto;
-import org.pronsky.hotels.service.dto.AmenitiesDto;
 import org.pronsky.hotels.service.dto.ArrivalTimeDto;
 import org.pronsky.hotels.service.dto.ContactsDto;
 import org.pronsky.hotels.service.dto.request.HotelForCreatingDto;
@@ -22,6 +21,17 @@ import java.util.stream.Stream;
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE)
 public interface HotelMapper {
 
+    String FREE_PARKING = "Free parking";
+    String FREE_WI_FI = "Free WiFi";
+    String NON_SMOKING_ROOMS = "Non-smoking rooms";
+    String CONCIERGE = "Concierge";
+    String ON_SITE_RESTAURANT = "On-site restaurant";
+    String FITNESS_CENTER = "Fitness center";
+    String PET_FRIENDLY_ROOMS = "Pet-friendly rooms";
+    String ROOM_SERVICE = "Room service";
+    String BUSINESS_CENTER = "Business center";
+    String MEETING_ROOMS = "Meeting rooms";
+
     @Mapping(source = "hotel.id", target = "id")
     @Mapping(source = "hotel.name", target = "name")
     @Mapping(source = "hotel.description", target = "description")
@@ -33,7 +43,7 @@ public interface HotelMapper {
     @Mapping(source = "name", target = "name")
     @Mapping(source = "description", target = "description")
     @Mapping(source = "brand", target = "brand")
-    @Mapping(expression = "java(amenitiesToAmenitiesDto(hotel.getAmenities()))", target = "amenities")
+    @Mapping(expression = "java(mapAmenities(hotel.getAmenities()))", target = "amenities")
     @Mapping(expression = "java(contactsToContactsDto(hotel.getContacts()))", target = "contacts")
     @Mapping(expression = "java(addressToAddressDto(hotel.getAddress()))", target = "address")
     @Mapping(expression = "java(arrivalTimeToArrivalTimeDto(hotel.getArrivalTime()))", target = "arrivalTime")
@@ -68,35 +78,20 @@ public interface HotelMapper {
     @Mapping(source = "arrivalTime.checkOut", target = "arrivalTime.checkOut")
     Hotel fromHotelForCreatingDtoToHotel(HotelForCreatingDto hotelForCreatingDto);
 
-    default AmenitiesDto amenitiesToAmenitiesDto(Amenities amenities) {
-        List<String> amenitiesList = Stream.of(
-                        "freeParking",
-                        "freeWiFi",
-                        "nonSmokingRooms",
-                        "concierge",
-                        "onSiteRestaurant",
-                        "fitnessCenter",
-                        "petFriendlyRooms",
-                        "roomService",
-                        "businessCenter",
-                        "meetingRooms"
+    default List<String> mapAmenities(Amenities amenities) {
+        return Stream.of(
+                        amenities.isFreeParking() ? FREE_PARKING : "",
+                        amenities.isFreeWiFi() ? FREE_WI_FI : "",
+                        amenities.isNonSmokingRooms() ? NON_SMOKING_ROOMS : "",
+                        amenities.isConcierge() ? CONCIERGE : "",
+                        amenities.isOnSiteRestaurant() ? ON_SITE_RESTAURANT : "",
+                        amenities.isFitnessCenter() ? FITNESS_CENTER : "",
+                        amenities.isPetFriendlyRooms() ? PET_FRIENDLY_ROOMS : "",
+                        amenities.isRoomService() ? ROOM_SERVICE : "",
+                        amenities.isBusinessCenter() ? BUSINESS_CENTER : "",
+                        amenities.isMeetingRooms() ? MEETING_ROOMS : ""
                 )
-                .filter(fieldName -> {
-                    switch (fieldName) {
-                        case "freeParking" -> { return amenities.isFreeParking(); }
-                        case "freeWiFi" -> { return amenities.isFreeWiFi(); }
-                        case "nonSmokingRooms" -> { return amenities.isNonSmokingRooms(); }
-                        case "concierge" -> { return amenities.isConcierge(); }
-                        case "onSiteRestaurant" -> { return amenities.isOnSiteRestaurant(); }
-                        case "fitnessCenter" -> { return amenities.isFitnessCenter(); }
-                        case "petFriendlyRooms" -> { return amenities.isPetFriendlyRooms(); }
-                        case "roomService" -> { return amenities.isRoomService(); }
-                        case "businessCenter" -> { return amenities.isBusinessCenter(); }
-                        case "meetingRooms" -> { return amenities.isMeetingRooms(); }
-                        default -> { return false; }
-                    }
-                })
+                .filter(amenity -> !amenity.isBlank())
                 .toList();
-        return new AmenitiesDto(amenitiesList);
     }
 }

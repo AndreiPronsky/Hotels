@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -39,9 +40,21 @@ public class HotelControllerImpl implements HotelController {
         return ResponseEntity.ok(hotelService.findById(id));
     }
 
+
     @Override
     @GetMapping("/search")
-    public ResponseEntity<List<ReducedHotelDto>> search(HotelSearchDto searchParams) {
+    public ResponseEntity<List<ReducedHotelDto>> search(@RequestParam(required = false) String name,
+                                                        @RequestParam(required = false) String brand,
+                                                        @RequestParam(required = false) String city,
+                                                        @RequestParam(required = false) String country,
+                                                        @RequestParam(required = false) List<String> amenities) {
+        HotelSearchDto searchParams = HotelSearchDto.builder()
+                .name(name)
+                .brand(brand)
+                .city(city)
+                .country(country)
+                .amenities(amenities)
+                .build();
         return ResponseEntity.ok(hotelService.findAllFiltered(searchParams));
     }
 
@@ -59,7 +72,7 @@ public class HotelControllerImpl implements HotelController {
 
     @Override
     @PostMapping("/hotels/{id}/amenities")
-    public ResponseEntity<Void> addAmenities(@PathVariable("id") long id, List<String> amenities) {
+    public ResponseEntity<Void> addAmenities(@PathVariable("id") long id, @RequestBody List<String> amenities) {
         hotelService.setHotelAmenities(id, amenities);
         return ResponseEntity.noContent().build();
     }

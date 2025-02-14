@@ -4,9 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import org.pronsky.hotels.service.dto.AddressDto;
-import org.pronsky.hotels.service.dto.AmenitiesDto;
 import org.pronsky.hotels.service.dto.ArrivalTimeDto;
 import org.pronsky.hotels.service.dto.ContactsDto;
+
+import java.util.List;
 
 @Data
 @Builder
@@ -20,5 +21,5 @@ public class FullHotelDto {
     private AddressDto address;
     private ContactsDto contacts;
     private ArrivalTimeDto arrivalTime;
-    private AmenitiesDto amenities;
+    private List<String> amenities;
 }

@@ -11,7 +11,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Data
 @Entity
@@ -27,8 +27,8 @@ public class ArrivalTime {
     private Long id;
 
     @Column(name = "check_in", nullable = false)
-    private LocalDateTime checkIn;
+    private LocalTime checkIn;
 
     @Column(name = "check_out", nullable = false)
-    private LocalDateTime checkOut;
+    private LocalTime checkOut;
 }
