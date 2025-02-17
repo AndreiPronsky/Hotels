@@ -1,9 +1,16 @@
 package org.pronsky.hotels.web.controller.impl;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.pronsky.hotels.service.HotelService;
 import org.pronsky.hotels.service.dto.request.HotelForCreatingDto;
 import org.pronsky.hotels.service.dto.request.HotelSearchDto;
+import org.pronsky.hotels.service.dto.response.ErrorResponseDto;
 import org.pronsky.hotels.service.dto.response.FullHotelDto;
 import org.pronsky.hotels.service.dto.response.ReducedHotelDto;
 import org.pronsky.hotels.web.controller.HotelController;
@@ -24,23 +31,54 @@ import java.util.Map;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/property-view")
+@Tag(name = "Hotel API")
 public class HotelControllerImpl implements HotelController {
 
     private final HotelService hotelService;
 
     @Override
+    @Operation(summary = "Get concise information about all hotels")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ReducedHotelDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))})
+    })
     @GetMapping("/hotels")
     public ResponseEntity<List<ReducedHotelDto>> getAllReduced() {
         return ResponseEntity.ok(hotelService.findAll());
     }
 
     @Override
+    @Operation(summary = "Get full hotel information by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = FullHotelDto.class))}),
+            @ApiResponse(responseCode = "404", description = "Not found", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))})
+    })
     @GetMapping("/hotels/{id}")
     public ResponseEntity<FullHotelDto> getById(@PathVariable("id") Long id) {
         return ResponseEntity.ok(hotelService.findById(id));
     }
 
     @Override
+    @Operation(summary = "Get concise information about hotels matching search parameters")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ReducedHotelDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))})
+    })
     @GetMapping("/search")
     public ResponseEntity<List<ReducedHotelDto>> search(@RequestParam(required = false) String name,
                                                         @RequestParam(required = false) String brand,
@@ -58,6 +96,15 @@ public class HotelControllerImpl implements HotelController {
     }
 
     @Override
+    @Operation(summary = "Add a new hotel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Created", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ReducedHotelDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))})
+    })
     @PostMapping("/hotels")
     public ResponseEntity<ReducedHotelDto> createHotel(@RequestBody HotelForCreatingDto hotel) {
         ReducedHotelDto hotelDto = hotelService.create(hotel);
@@ -70,6 +117,16 @@ public class HotelControllerImpl implements HotelController {
     }
 
     @Override
+    @Operation(summary = "Add amenities to an existing hotel")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "No content"),
+            @ApiResponse(responseCode = "404", description = "Not found", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))})
+    })
     @PostMapping("/hotels/{id}/amenities")
     public ResponseEntity<Void> addAmenities(@PathVariable("id") long id, @RequestBody List<String> amenities) {
         hotelService.setHotelAmenities(id, amenities);
@@ -77,6 +134,15 @@ public class HotelControllerImpl implements HotelController {
     }
 
     @Override
+    @Operation(summary = "Get the number of hotels grouped by each value of the specified parameter")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "OK", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = Map.class))}),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error", content =
+                    {@Content(mediaType = "application/json", schema =
+                    @Schema(implementation = ErrorResponseDto.class))})
+    })
     @GetMapping("/histogram/{param}")
     public ResponseEntity<Map<String, Integer>> getHistogramByParam(@PathVariable("param") String param) {
         return ResponseEntity.ok(hotelService.getHistogram(param));
